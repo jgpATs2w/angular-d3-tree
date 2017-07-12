@@ -199,10 +199,9 @@ export class TreeModel {
     }
 
     function dragged(d){
-      d3.select(this)//.attr("cx", d.x0 += d3.event.dy).attr("cy", d.y0 += d3.event.dx);
+      d3.select(this)
         .attr("transform", "translate(" + d3.event.x + "," + d3.event.y + ")");
-      treeModel.draggingNode.x= d3.event.x;
-      treeModel.draggingNode.y= d3.event.y;
+
       if(treeModel.dragStarted){
         treeModel.svg.selectAll("g.node").sort((a, b) => { // select the parent and sort the path's
             if (a.id != treeModel.draggingNode.id) return 1; // a is not the hovered element, send "a" to the back
@@ -210,13 +209,17 @@ export class TreeModel {
         });
 
         // if nodes has children, remove the links and nodes
-        if (treeModel.nodes.length > 1) {
+        const childs= d.descendants();
+        if (childs.length > 1) {
             // remove link paths
             let links = d.links();
-            let nodePaths = treeModel.svg.selectAll("path.link")
-                .data(links, function(source, target) {
-                    return target;
-                }).remove();
+            treeModel.svg.selectAll('path.link').filter(function(d, i) {
+                  if (d.id == treeModel.draggingNode.id) {
+                      return true;
+                  }
+                  return false;
+              }).remove();
+
             // remove child nodes
             let nodesExit = treeModel.svg.selectAll("g.node")
                 .data(treeModel.nodes, function(d) {
@@ -244,11 +247,53 @@ export class TreeModel {
     }
 
     function dragEnd(d){
-      treeModel.selectedNode = null;
       d3.select(this).classed("active", false);
 
       d3.selectAll('.ghostCircle').attr('class', 'ghostCircle');
       d3.select(this).attr('class', 'node');
+
+      if (d == treeModel.root) {
+          return;
+      }
+      let domNode = this;
+      if (treeModel.selectedNode) {
+          // now remove the element from the parent, and insert it into the new elements children
+          var index = treeModel.draggingNode.parent.children.indexOf(treeModel.draggingNode);
+          if (index > -1) {
+              treeModel.draggingNode.parent.children.splice(index, 1);
+          }
+          if (treeModel.selectedNode.children != null || treeModel.selectedNode._children != null ) {
+              if (treeModel.selectedNode.children != null ) {
+                  treeModel.selectedNode.children.push(treeModel.draggingNode);
+              } else {
+                  treeModel.selectedNode._children.push(treeModel.draggingNode);
+              }
+          } else {
+              treeModel.selectedNode.children = [];
+              treeModel.selectedNode.children.push(treeModel.draggingNode);
+          }
+          // Make sure that the node being added to is expanded so user can see added node is correctly moved
+          //expand(selectedNode);
+          //sortTree();
+          endDrag(domNode);
+      } else {
+          endDrag(domNode);
+      }
+    }
+
+    function endDrag(domNode) {
+        d3.selectAll('.ghostCircle').attr('class', 'ghostCircle');
+        d3.select(domNode).attr('class', 'node');
+        // now restore the mouseover event or we won't be able to drag a 2nd time
+        d3.select(domNode).select('.ghostCircle').attr('pointer-events', '');
+
+        if (treeModel.draggingNode !== null) {
+            treeModel.update(treeModel.selectedNode);
+            //centerNode(treeModel.draggingNode);
+            treeModel.draggingNode = null;
+        }
+
+        treeModel.selectedNode = null;
     }
   }
 
@@ -258,6 +303,7 @@ export class TreeModel {
   outCircle(d) {
       this.selectedNode = null;
   };
+
 
   setLinks( source: any, treeData: any){
 
@@ -312,7 +358,5 @@ export class TreeModel {
   radialPoint(x, y) {
     return [(y = +y) * Math.cos(x -= Math.PI / 2), y * Math.sin(x)];
   }
-
-
 
 }

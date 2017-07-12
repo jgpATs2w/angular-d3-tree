@@ -1,5 +1,4 @@
 .d3-chart {
-  margin-left: 2em;
   width: 100%;
   height:800px;
 }
@@ -10,7 +9,7 @@
 }
 
 .node text {
-  font: 1px sans-serif;
+  font: 10px sans-serif;
 }
 
 .link {
@@ -20,6 +19,25 @@
 }
 
 .active {
-  stroke: #f00;
-  stroke-width: 4px;
+  stroke: #f00 !important;
+  stroke-width: 1px !important;
+}
+
+
+.ghostCircle.show{
+    display:block;
+}
+.ghostCircle.over{
+  fill: green !important;
+  stroke: steelblue;
+  stroke-width: 0.2px;
+}
+
+.ghostCircle, .active .ghostCircle{
+     display: none;
+}
+.templink {
+  fill: none;
+  stroke: red;
+  stroke-width: 3px;
 }

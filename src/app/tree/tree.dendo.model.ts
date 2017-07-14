@@ -23,7 +23,10 @@ export class TreeModel {
   dragStarted: boolean;
   draggingNode: any;
   nodes: any[];
-  selectedNode: any;
+  selectedNodeByDrag: any;
+
+  selectedNodeByClick: any;
+  previousClickedDomNode: any;
 
   constructor(){}
 
@@ -40,13 +43,20 @@ export class TreeModel {
       .attr("transform", "translate("
             + this.margin.left + "," + this.margin.top + ")");
 
-    d3.select("svg").call(d3.zoom()
-        .on("zoom", this.zoomed));
-
+    this.setZoomBehaviour();
   }
 
-  zoomed() { console.error("FIXME: zoom start");
-    d3.select("g").attr("transform", d3.event.transform);
+  setZoomBehaviour() {
+    const zoom= d3.zoom().on("zoom", zoomed );
+    const svg= d3.select("svg");
+
+    var t = d3.zoomIdentity.translate(this.margin.left, this.margin.top);
+    svg.call(zoom.transform, t);
+    svg.call(zoom);
+    function zoomed(){
+      var transform= d3.event.transform;
+      d3.select("g").attr("transform", d3.event.transform);
+    }
   }
 
   createLayout(){
@@ -188,9 +198,9 @@ export class TreeModel {
 
     nodeEnter
       .call(this.dragBehaviour())
-      .on('click', (d)=>{
-        this.click(d);
-        this.update(d);
+      .on('click', function(d){
+        treeModel.click(d, this);
+        treeModel.update(d);
       });
   }
 
@@ -269,28 +279,28 @@ export class TreeModel {
           return;
       }
       let domNode = this;
-      if (treeModel.selectedNode) {
+      if (treeModel.selectedNodeByDrag) {
           // now remove the element from the parent, and insert it into the new elements children
           var index = treeModel.draggingNode.parent.children.indexOf(treeModel.draggingNode);
           if (index > -1) {
               treeModel.draggingNode.parent.children.splice(index, 1);
           }
-          if (treeModel.selectedNode.children != null || treeModel.selectedNode._children != null ) {
-              if (treeModel.selectedNode.children != null ) {
-                  treeModel.selectedNode.children.push(treeModel.draggingNode);
+          if (treeModel.selectedNodeByDrag.children != null || treeModel.selectedNodeByDrag._children != null ) {
+              if (treeModel.selectedNodeByDrag.children != null ) {
+                  treeModel.selectedNodeByDrag.children.push(treeModel.draggingNode);
               } else {
-                  treeModel.selectedNode._children.push(treeModel.draggingNode);
+                  treeModel.selectedNodeByDrag._children.push(treeModel.draggingNode);
               }
           } else {
-              treeModel.selectedNode.children = [treeModel.draggingNode];
+              treeModel.selectedNodeByDrag.children = [treeModel.draggingNode];
           }
           //set new parent
-          treeModel.draggingNode.parent= treeModel.selectedNode;
+          treeModel.draggingNode.parent= treeModel.selectedNodeByDrag;
           // Make sure that the node being added to is expanded so user can see added node is correctly moved
-          treeModel.expandAndFixHeight(treeModel.draggingNode, treeModel.selectedNode);
+          treeModel.expandAndFixHeight(treeModel.draggingNode, treeModel.selectedNodeByDrag);
           //sortTree();
-          endDrag(domNode);
           treeModel.nodechanged(treeModel.draggingNode);
+          endDrag(domNode);
       } else {
           endDrag(domNode);
       }
@@ -308,7 +318,7 @@ export class TreeModel {
             treeModel.draggingNode = null;
         }
 
-        treeModel.selectedNode = null;
+        treeModel.selectedNodeByDrag = null;
     }
 
     return d3.drag()
@@ -319,10 +329,10 @@ export class TreeModel {
   }
 
   overCircle(d) {
-      this.selectedNode = d;
+      this.selectedNodeByDrag = d;
   };
   outCircle(d) {
-      this.selectedNode = null;
+      this.selectedNodeByDrag = null;
   };
 
   setLinks( source: any, treeData: any){
@@ -353,14 +363,23 @@ export class TreeModel {
         .remove();
   }
 
-  click(d) {
+  click(d, domNode) {
+    if(this.previousClickedDomNode)
+      this.previousClickedDomNode.classList.remove("selected");
     if (d.children) {
         d._children = d.children;
         d.children = null;
-      } else {
-        d.children = d._children;
-        d._children = null;
-      }
+
+        domNode.classList.remove("selected");
+    } else {
+      d.children = d._children;
+      d._children = null;
+
+      domNode.classList.add("selected");
+    }
+    this.selectedNodeByClick= d;
+    this.previousClickedDomNode= domNode;
+    this.nodeselected(d);
   }
 
   // Creates a curved (diagonal) path from parent to the child nodes
@@ -378,9 +397,23 @@ export class TreeModel {
     return [(y = +y) * Math.cos(x -= Math.PI / 2), y * Math.sin(x)];
   }
 
+  addNode(newNode: any){
+    if(this.selectedNodeByClick){
+      if(this.selectedNodeByClick.children)
+        this.selectedNodeByClick.children.push(newNode);
+      else
+        this.selectedNodeByClick._children.push(newNode);
+      this.update(this.selectedNodeByClick);
+    }else{
+      this.root.children.push(newNode);
+      this.update(this.root);
+    }
+  }
+
   //events
   nodechanged(node){
     console.info("nodechanged default");
   }
+  nodeselected(node){}
 
 }

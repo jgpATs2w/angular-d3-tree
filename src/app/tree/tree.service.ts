@@ -8,31 +8,30 @@ export class TreeService {
 
   constructor() {}
 
-  setDatum(data:any){
-    this.treeModel.treeData= data;
-    Observable.from(this.treeModel.treeData).subscribe(()=>this.update);
-  }
-
   createChart(chartContainer: any, treeData: any): void {
-
+    let element = chartContainer.nativeElement;
+    element.innerHTML= "";
     this.treeModel.addSvgToContainer(chartContainer);
 
     this.treeModel.createLayout();
 
     this.treeModel.createTreeData(treeData);
 
-    return this.treeModel.root;
   }
 
-  update(source){
-    this.treeModel.update(source);
+  update(){
+    this.treeModel.update(this.treeModel.root);
   }
-  setListener(eventName, callable){
-    let eventFn= this.treeModel[eventName];
-    if(eventFn == null ){
-      console.error(eventName+" unknown");
-      return;
-    }
-    eventFn= callable;
+
+  setNodeChangedListener(callable){
+    this.treeModel.nodechanged= callable;
   }
+  setNodeSelectedListener(callable){
+    this.treeModel.nodeselected= callable;
+  }
+
+  addNode(node: any){
+    this.treeModel.addNode(node);
+  }
+
 }

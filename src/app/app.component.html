@@ -3,6 +3,9 @@
   <option value="simple">Sencillo</option>
   <option value="complex">Complejo</option>
 </select>
+
+<button (click)="addNode()">Nuevo nodo</button>
 <app-tree
-  [(treeData)]="tags"
-  (onNodeChanged)="nodeUpdated($event)"></app-tree>
+  [(treeData)]="data"
+  (onNodeChanged)="nodeUpdated($event)"
+  (onNodeSelected)="nodeSelected($event)"></app-tree>

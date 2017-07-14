@@ -22,7 +22,9 @@
   stroke: #f00 !important;
   stroke-width: 1px !important;
 }
-
+.selected{
+  stroke: #f00 !important;
+}
 
 .ghostCircle.show{
     display:block;

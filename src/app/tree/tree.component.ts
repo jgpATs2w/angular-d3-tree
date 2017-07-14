@@ -16,27 +16,31 @@ import { TreeService } from './tree.service';
 export class TreeComponent implements OnInit, OnChanges {
   @ViewChild('chart') private chartContainer: ElementRef;
   @Input() private treeData: any= [];
-  @Output() onNodeChanged: EventEmitter<any>;
+  @Output() onNodeChanged: EventEmitter<any>= new EventEmitter();
+  @Output() onNodeSelected: EventEmitter<any>= new EventEmitter();
 
 
   constructor(private treeService: TreeService) {
 
-    treeService.setDatum(this.treeData);
-
-    this.onNodeChanged= new EventEmitter();
-    treeService.setListener('nodechanged', (node)=>{
+    treeService.setNodeChangedListener((node)=>{
       this.onNodeChanged.emit(node);
     })
-    Observable.from(this.treeData).subscribe((d)=>{
-      treeService.update(d)
-    });
+    treeService.setNodeSelectedListener((node)=>{
+      this.onNodeSelected.emit(node);
+    })
   }
 
   ngOnInit() {
-    const root= this.treeService.createChart(this.chartContainer, this.treeData);
-    this.treeService.update(root);
+    this.seedTree();
   }
 
-  ngOnChanges() {}
+  ngOnChanges(changes: any) {
+    this.seedTree();
+  }
+
+  seedTree(){
+      this.treeService.createChart(this.chartContainer, this.treeData);
+      this.treeService.update();
+  }
 
 }

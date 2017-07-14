@@ -28,7 +28,7 @@ export class TreeModel {
   constructor(){}
 
   addSvgToContainer(chartContainer: any){
-    let element = chartContainer.nativeElement;console.info(element.offsetWidth)
+    let element = chartContainer.nativeElement;
 
     this.width = element.offsetWidth - this.margin.left - this.margin.right;
     this.height = element.offsetHeight - this.margin.top - this.margin.bottom;
@@ -45,7 +45,7 @@ export class TreeModel {
 
   }
 
-  zoomed() {
+  zoomed() { console.error("FIXME: zoom start");
     d3.select("g").attr("transform", d3.event.transform);
   }
 
@@ -74,7 +74,25 @@ export class TreeModel {
       d.children = null
     }
   }
+  expand(d) {
+    if(d._children) {
+      d.children = d._children
+      d.children.map((d)=>this.expand(d));
+      d.children = null
+    }
+  }
+  expandAndFixHeight(d, newParent) {
+    d.height= newParent.height-1;
+    d.depth= newParent.depth+1;
 
+    if(d._children){
+      d.children= d._children;
+      d._children= null;
+    }
+    if(d.children) {
+      d.children.map((child)=>this.expandAndFixHeight(child, d));
+    }
+  }
   update(source) {
     const treeData = this.treeLayout(this.root);
 
@@ -98,10 +116,6 @@ export class TreeModel {
         .attr('class', 'node')
         .attr("transform", function(d) {
             return "translate(" + source.y0 + "," + source.x0 + ")";
-        })
-        .on('click', (d)=>{
-          this.click(d);
-          this.update(d);
         });
 
     nodeEnter.append('circle')
@@ -119,7 +133,9 @@ export class TreeModel {
         .attr("text-anchor", function(d) {
             return d.children || d._children ? "end" : "start";
         })
-        .text(function(d) { return d.data.DESCRIPCION + " " + d.data.ID; });
+        .text(function(d){
+              return d.data.DESCRIPCION;
+            });
 
     nodeEnter.append("circle")
         .attr('class', 'ghostCircle')
@@ -170,18 +186,15 @@ export class TreeModel {
     nodeExit.select('text')
       .style('fill-opacity', 1e-6);
 
-    this.setDragBehaviour();
+    nodeEnter
+      .call(this.dragBehaviour())
+      .on('click', (d)=>{
+        this.click(d);
+        this.update(d);
+      });
   }
 
-  setDragBehaviour(){
-    d3.selectAll('.node')
-      .call(
-        d3.drag()
-        .subject(subject)
-        .on("start", dragStart)
-        .on("drag", dragged)
-        .on("end", dragEnd));
-
+  dragBehaviour(){
     let treeModel= this;
     function subject(d) {
         return { x: d3.event.x, y: d3.event.y }
@@ -269,13 +282,15 @@ export class TreeModel {
                   treeModel.selectedNode._children.push(treeModel.draggingNode);
               }
           } else {
-              treeModel.selectedNode.children = [];
-              treeModel.selectedNode.children.push(treeModel.draggingNode);
+              treeModel.selectedNode.children = [treeModel.draggingNode];
           }
+          //set new parent
+          treeModel.draggingNode.parent= treeModel.selectedNode;
           // Make sure that the node being added to is expanded so user can see added node is correctly moved
-          //expand(selectedNode);
+          treeModel.expandAndFixHeight(treeModel.draggingNode, treeModel.selectedNode);
           //sortTree();
           endDrag(domNode);
+          treeModel.nodechanged(treeModel.draggingNode);
       } else {
           endDrag(domNode);
       }
@@ -288,13 +303,19 @@ export class TreeModel {
         d3.select(domNode).select('.ghostCircle').attr('pointer-events', '');
 
         if (treeModel.draggingNode !== null) {
-            treeModel.update(treeModel.selectedNode);
+            treeModel.update(treeModel.root);
             //centerNode(treeModel.draggingNode);
             treeModel.draggingNode = null;
         }
 
         treeModel.selectedNode = null;
     }
+
+    return d3.drag()
+            .subject(subject)
+            .on("start", dragStart)
+            .on("drag", dragged)
+            .on("end", dragEnd);
   }
 
   overCircle(d) {
@@ -304,9 +325,7 @@ export class TreeModel {
       this.selectedNode = null;
   };
 
-
   setLinks( source: any, treeData: any){
-
     let links = treeData.descendants().slice(1);
     var link = this.svg.selectAll('path.link')
         .data(links, function(d) { return d.id; });
@@ -357,6 +376,11 @@ export class TreeModel {
 
   radialPoint(x, y) {
     return [(y = +y) * Math.cos(x -= Math.PI / 2), y * Math.sin(x)];
+  }
+
+  //events
+  nodechanged(node){
+    console.info("nodechanged default");
   }
 
 }

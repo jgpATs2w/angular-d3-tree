@@ -1,1 +1,8 @@
-<app-tree [(treeData)]="tags"></app-tree>
+
+<select (change)="setDataSource($event.target.value)">
+  <option value="simple">Sencillo</option>
+  <option value="complex">Complejo</option>
+</select>
+<app-tree
+  [(treeData)]="tags"
+  (onNodeChanged)="nodeUpdated($event)"></app-tree>

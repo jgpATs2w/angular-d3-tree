@@ -1,4 +1,4 @@
-const tagsFromGodiva= {
+const dataTreeComplex= {
   "result": [
     {
       "ID": "0",
@@ -22249,4 +22249,4 @@ const tagsFromGodiva= {
     }
   ]
 }
-export default tagsFromGodiva;
+export default dataTreeComplex;

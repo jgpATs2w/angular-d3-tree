@@ -27,5 +27,12 @@ export class TreeService {
   update(source){
     this.treeModel.update(source);
   }
-
+  setListener(eventName, callable){
+    let eventFn= this.treeModel[eventName];
+    if(eventFn == null ){
+      console.error(eventName+" unknown");
+      return;
+    }
+    eventFn= callable;
+  }
 }

@@ -1,4 +1,6 @@
-import { Component, OnInit, OnChanges, ViewChild, ElementRef, Input, ViewEncapsulation } from '@angular/core';
+import {
+  Component, OnInit, OnChanges, ViewChild, ElementRef,
+  Input, Output, EventEmitter, ViewEncapsulation } from '@angular/core';
 import { Subject, Observable } from 'rxjs';
 import * as d3 from 'd3';
 
@@ -14,13 +16,20 @@ import { TreeService } from './tree.service';
 export class TreeComponent implements OnInit, OnChanges {
   @ViewChild('chart') private chartContainer: ElementRef;
   @Input() private treeData: any= [];
+  @Output() onNodeChanged: EventEmitter<any>;
 
 
   constructor(private treeService: TreeService) {
 
     treeService.setDatum(this.treeData);
 
-    Observable.from(this.treeData).subscribe((d)=>treeService.update(d));
+    this.onNodeChanged= new EventEmitter();
+    treeService.setListener('nodechanged', (node)=>{
+      this.onNodeChanged.emit(node);
+    })
+    Observable.from(this.treeData).subscribe((d)=>{
+      treeService.update(d)
+    });
   }
 
   ngOnInit() {

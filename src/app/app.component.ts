@@ -1,10 +1,10 @@
 import {Component } from '@angular/core';
+import { Subject, Observable } from 'rxjs';
 
-import dataTreeSimple from './godiva-10-es-geografia';
-import dataTreeComplex from './godiva-10-es';
+import dataTreeSimple from './data-tree-simple';
+import dataTreeComplex from './data-tree-complex';
 
 import { TreeService } from './tree/tree.service';
-import { Subject, Observable } from 'rxjs';
 
 @Component({
   selector: 'app-root',
@@ -14,6 +14,7 @@ import { Subject, Observable } from 'rxjs';
 export class AppComponent{
   data: any[];
   treeService: TreeService;
+  selectedNode: any;
 
   constructor(treeService: TreeService) {
     this.setDataSource("simple");
@@ -22,22 +23,21 @@ export class AppComponent{
 
   setDataSource(dataSource: string){
     const data= (dataSource=="simple")? dataTreeSimple: dataTreeComplex;
-    this.data= data.result.sort((a,b) => {return +a.ID - +b.ID});
+    this.data= data.result;//.sort((a,b) => {return +a.id - +b.id});
   }
 
   nodeUpdated(node:any){
     console.info("app detected node change");
   }
   nodeSelected(node:any){
-    console.info("app detected node selected");
-    console.info(node);
+    console.info("app detected node selected", node);
+    this.selectedNode= node;
   }
 
   addNode():void{
-    /*let data= this.data.slice(0);
-    data.push({DESCRIPCION: "nuevo", PARENT_ID: '1'});
-    this.data= data.sort((a,b) => {return +a.ID - +b.ID});*/
-    this.treeService.addNode({DESCRIPCION: "nuevo"});
+    const parent= this.selectedNode? this.selectedNode.id: "1";
+    const name= window.prompt("new node name");
+    this.treeService.addNode({id: "999", descripcion: name, parent: parent});
   }
 
 }

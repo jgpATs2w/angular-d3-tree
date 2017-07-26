@@ -1,6 +1,6 @@
 .d3-chart {
   width: 100%;
-  height:800px;
+  min-height:600px;
 }
 .node circle {
   fill: #fff;
@@ -15,15 +15,15 @@
 .link {
   fill: none;
   stroke: #ccc;
-  stroke-width: 1px;
+  stroke-width: 0.5px;
 }
 
 .active {
-  stroke: #f00 !important;
   stroke-width: 1px !important;
 }
-.selected{
-  stroke: #f00 !important;
+.selected text{
+  stroke-width: 2px !important;
+  fill: #0f0;
 }
 
 .ghostCircle.show{

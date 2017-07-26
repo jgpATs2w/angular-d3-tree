@@ -68,8 +68,10 @@ export class TreeModel {
 
   createTreeData(treeData: any){
     this.root = d3.stratify<any>()
-          .id(function(d) { return d.ID; })
-          .parentId(function(d) { return d.PARENT_ID; })
+          .id(function(d) {
+            return d.id; })
+          .parentId(function(d) {
+            return d.parent; })
           (treeData);
     this.root.x0 = this.height / 2;
     this.root.y0 = 0;
@@ -144,7 +146,7 @@ export class TreeModel {
             return d.children || d._children ? "end" : "start";
         })
         .text(function(d){
-              return d.data.DESCRIPCION;
+              return d.data.name || d.data.descripcion || d.id;
             });
 
     nodeEnter.append("circle")
@@ -398,11 +400,14 @@ export class TreeModel {
   }
 
   addNode(newNode: any){
+
     if(this.selectedNodeByClick){
       if(this.selectedNodeByClick.children)
         this.selectedNodeByClick.children.push(newNode);
-      else
+      else if(this.selectedNodeByClick._children)
         this.selectedNodeByClick._children.push(newNode);
+      else
+        this.selectedNodeByClick.children= [newNode];
       this.update(this.selectedNodeByClick);
     }else{
       this.root.children.push(newNode);

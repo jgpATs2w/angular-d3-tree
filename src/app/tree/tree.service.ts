@@ -5,6 +5,7 @@ import { Subject, Observable } from 'rxjs';
 @Injectable()
 export class TreeService {
   treeModel: TreeModel= new TreeModel();
+  private _treeData: any;
 
   constructor() {}
 
@@ -15,6 +16,7 @@ export class TreeService {
 
     this.treeModel.createLayout();
 
+    this._treeData= treeData;
     this.treeModel.createTreeData(treeData);
 
   }
@@ -31,7 +33,9 @@ export class TreeService {
   }
 
   addNode(node: any){
-    this.treeModel.addNode(node);
+    this._treeData.push(node);
+    this.treeModel.createTreeData(this._treeData);
+    this.update();
   }
 
 }

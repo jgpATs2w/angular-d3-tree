@@ -1,27 +1,49 @@
-# AngularD3Tree
+# angular-d3-tree
 
-This project was generated with [Angular CLI](https://github.com/angular/angular-cli) version 6.0.8.
+This is a component to easily integrate [D3](https://d3js.org/) into your Angular app.
 
-## Development server
+[![NPM](https://nodei.co/npm/angular-d3-tree.png?downloads=true&stars=true)](https://nodei.co/npm/angular-d3-tree/)
 
-Run `ng serve` for a dev server. Navigate to `http://localhost:4200/`. The app will automatically reload if you change any of the source files.
+## [Demo](https://angular-d3-tree.stackblitz.io)
 
-## Code scaffolding
+Check out [the live demo](https://angular-d3-tree.stackblitz.io).
 
-Run `ng generate component component-name` to generate a new component. You can also use `ng generate directive|pipe|service|class|guard|interface|enum|module`.
 
-## Build
+## Getting Started
 
-Run `ng build` to build the project. The build artifacts will be stored in the `dist/` directory. Use the `--prod` flag for a production build.
+    npm install angular-d3-tree --save // OR
+    yarn add angular-d3-tree
 
-## Running unit tests
+**Notice**: the latest version on NPM may not reflect the branch `master`. Open an issue and tag me if you need it to be published.
 
-Run `ng test` to execute the unit tests via [Karma](https://karma-runner.github.io).
 
-## Running end-to-end tests
+## Configuration
 
-Run `ng e2e` to execute the end-to-end tests via [Protractor](http://www.protractortest.org/).
+Ensure you import the module and the dependencies:
 
-## Further help
+```javascript
+import { AngularD3TreeLibModule } from 'angular-d3-tree-lib';
 
-To get more help on the Angular CLI use `ng help` or go check out the [Angular CLI README](https://github.com/angular/angular-cli/blob/master/README.md).
+@NgModule({
+   imports: [
+       AngularD3TreeLibModule,
+       ...OtherModules
+   ] // along with your other modules
+})
+export class AppModule {}
+```
+
+## Run from github
+
+To make changes in the library and easily debig them you can do it locally:
+
+```
+git clone https://github.com/jgpats2w/angular-d3-tree
+cd angular-d3-tree
+ng build --prod angular-d3-tree-lib //build the library
+npm start //open localhost:4200 to watch the demo
+//to see your changes in the library you need to rebuild the library, stop and start the ng server
+```
+## Collaboration - yes, please -
+
+Make issues and pull requests to help improving!!

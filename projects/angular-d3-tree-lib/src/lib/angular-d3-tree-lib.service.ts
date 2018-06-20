@@ -1,13 +1,13 @@
 import { Injectable } from '@angular/core';
 import { TreeModel } from './tree.dendo.model';
-import { Subject, Observable } from 'rxjs';
 
-@Injectable()
-export class TreeService {
+@Injectable({
+  providedIn: 'root'
+})
+export class AngularD3TreeLibService {
   treeModel: TreeModel= new TreeModel();
-  private _treeData: any;
 
-  constructor() {}
+  constructor() { }
 
   createChart(chartContainer: any, treeData: any): void {
     let element = chartContainer.nativeElement;
@@ -16,7 +16,6 @@ export class TreeService {
 
     this.treeModel.createLayout();
 
-    this._treeData= treeData;
     this.treeModel.createTreeData(treeData);
 
   }
@@ -33,9 +32,7 @@ export class TreeService {
   }
 
   addNode(node: any){
-    this._treeData.push(node);
-    this.treeModel.createTreeData(this._treeData);
-    this.update();
+    this.treeModel.addNode(node);
   }
 
 }

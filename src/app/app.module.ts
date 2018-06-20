@@ -1,23 +1,18 @@
 import { BrowserModule } from '@angular/platform-browser';
 import { NgModule } from '@angular/core';
-import { FormsModule } from '@angular/forms';
-import { HttpModule } from '@angular/http';
 
+import { AngularD3TreeLibModule } from 'angular-d3-tree-lib';
 import { AppComponent } from './app.component';
-import { TreeComponent } from './tree/tree.component';
-import { TreeService } from './tree/tree.service';
 
 @NgModule({
   declarations: [
-    AppComponent,
-    TreeComponent
+    AppComponent
   ],
   imports: [
     BrowserModule,
-    FormsModule,
-    HttpModule
+    AngularD3TreeLibModule
   ],
-  providers: [ TreeService ],
+  providers: [],
   bootstrap: [AppComponent]
 })
 export class AppModule { }

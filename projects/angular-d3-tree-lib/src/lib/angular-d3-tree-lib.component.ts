@@ -1,27 +1,23 @@
-import {
-  Component, OnInit, OnChanges, ViewChild, ElementRef,
-  Input, Output, EventEmitter, ViewEncapsulation } from '@angular/core';
-import { Subject, Observable } from 'rxjs';
-import * as d3 from 'd3';
+import { Component, OnInit, OnChanges, ViewChild, ElementRef,
+   Input, Output, EventEmitter} from '@angular/core';
 
-import { TreeService } from './tree.service';
-
+import { AngularD3TreeLibService } from './angular-d3-tree-lib.service';
 @Component({
-  selector: 'app-tree',
-  templateUrl: './tree.component.html',
-  styleUrls: ['./tree.component.css'],
-  encapsulation: ViewEncapsulation.None
+  selector: 's2w-angular-d3-tree-lib',
+  template: `
+    <div
+      class="d3-chart"
+      #chart></div>
+  `,
+  styleUrls: ['./angular-d3-tree-lib.component.css']
 })
-
-export class TreeComponent implements OnInit, OnChanges {
+export class AngularD3TreeLibComponent implements OnInit, OnChanges {
   @ViewChild('chart') private chartContainer: ElementRef;
   @Input() private treeData: any= [];
   @Output() onNodeChanged: EventEmitter<any>= new EventEmitter();
   @Output() onNodeSelected: EventEmitter<any>= new EventEmitter();
 
-
-  constructor(private treeService: TreeService) {
-
+  constructor( private treeService: AngularD3TreeLibService ) {
     treeService.setNodeChangedListener((node)=>{
       this.onNodeChanged.emit(node);
     })
@@ -31,16 +27,14 @@ export class TreeComponent implements OnInit, OnChanges {
   }
 
   ngOnInit() {
-    this.seedTree();
   }
-
   ngOnChanges(changes: any) {
     this.seedTree();
   }
-
   seedTree(){
+    if(!!this.treeData){
       this.treeService.createChart(this.chartContainer, this.treeData);
       this.treeService.update();
+    }
   }
-
 }

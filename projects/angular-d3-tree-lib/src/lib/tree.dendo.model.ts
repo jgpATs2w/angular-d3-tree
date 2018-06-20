@@ -1,5 +1,6 @@
 import * as d3 from 'd3';
 
+/* based on http://bl.ocks.org/robschmuecker/7880033 */
 export class TreeModel {
 
   root: any;
@@ -68,10 +69,8 @@ export class TreeModel {
 
   createTreeData(treeData: any){
     this.root = d3.stratify<any>()
-          .id(function(d) {
-            return d.id; })
-          .parentId(function(d) {
-            return d.parent; })
+          .id(function(d) { return d.id; })
+          .parentId(function(d) { return d.parent; })
           (treeData);
     this.root.x0 = this.height / 2;
     this.root.y0 = 0;
@@ -146,7 +145,7 @@ export class TreeModel {
             return d.children || d._children ? "end" : "start";
         })
         .text(function(d){
-              return d.data.name || d.data.descripcion || d.id;
+              return d.data.name || d.data.description || d.id;
             });
 
     nodeEnter.append("circle")
@@ -400,7 +399,6 @@ export class TreeModel {
   }
 
   addNode(newNode: any){
-
     if(this.selectedNodeByClick){
       if(this.selectedNodeByClick.children)
         this.selectedNodeByClick.children.push(newNode);

@@ -1,31 +1,19 @@
-import {Component } from '@angular/core';
-import { Subject, Observable } from 'rxjs';
+import { Component } from '@angular/core';
 
-import dataTreeSimple from './data-tree-simple';
-import dataTreeComplex from './data-tree-complex';
-
-import { TreeService } from './tree/tree.service';
+import { AngularD3TreeLibService } from 'angular-d3-tree-lib';
+import dataTreeSimple from '../assets/data-tree-simple';
 
 @Component({
   selector: 'app-root',
   templateUrl: './app.component.html',
   styleUrls: ['./app.component.css']
 })
-export class AppComponent{
+export class AppComponent {
   data: any[];
-  treeService: TreeService;
   selectedNode: any;
-
-  constructor(treeService: TreeService) {
-    this.setDataSource("simple");
-    this.treeService= treeService;
+  constructor(private treeService: AngularD3TreeLibService) {
+    this.data= dataTreeSimple.result;
   }
-
-  setDataSource(dataSource: string){
-    const data= (dataSource=="simple")? dataTreeSimple: dataTreeComplex;
-    this.data= data.result;//.sort((a,b) => {return +a.id - +b.id});
-  }
-
   nodeUpdated(node:any){
     console.info("app detected node change");
   }
@@ -39,5 +27,4 @@ export class AppComponent{
     const name= window.prompt("new node name");
     this.treeService.addNode({id: "999", descripcion: name, parent: parent});
   }
-
 }

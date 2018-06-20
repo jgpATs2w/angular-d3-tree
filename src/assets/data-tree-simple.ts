@@ -1,6 +1,6 @@
 const dataTreeSimple= {
   "result": [
-    {"id":"1","descripcion":"raiz"},
+    {"id":"1","descripcion":"root"},
     {"id":"2","descripcion":"2","parent":"1"},
     {"id":"3","descripcion":"3","parent":"2"},
     {"id":"4","descripcion":"4","parent":"2"},

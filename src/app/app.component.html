@@ -1,11 +1,10 @@
-
-<select (change)="setDataSource($event.target.value)">
-  <option value="simple">Sencillo</option>
-  <option value="complex">Complejo</option>
-</select>
-
-<button (click)="addNode()">Nuevo nodo</button>
-<app-tree
+<!--The content below is only a placeholder and can be replaced.-->
+<div style="text-align:center">
+  <h1>
+    Welcome to angular-d3-tree!
+  </h1>
+</div>
+<s2w-angular-d3-tree-lib
   [(treeData)]="data"
   (onNodeChanged)="nodeUpdated($event)"
-  (onNodeSelected)="nodeSelected($event)"></app-tree>
+  (onNodeSelected)="nodeSelected($event)"></s2w-angular-d3-tree-lib>

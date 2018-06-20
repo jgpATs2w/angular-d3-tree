@@ -22,7 +22,7 @@ Check out [the live demo](https://angular-d3-tree.stackblitz.io).
 Ensure you import the module and the dependencies:
 
 ```javascript
-import { AngularD3TreeLibModule } from 'angular-d3-tree-lib';
+import { AngularD3TreeLibModule } from 'angular-d3-tree';
 
 @NgModule({
    imports: [
@@ -46,7 +46,7 @@ In your component:
  + Add to the typescript:
  ```
  ...
- import { AngularD3TreeLibService } from 'angular-d3-tree-lib';
+ import { AngularD3TreeLibService } from 'angular-d3-tree';
  ...
 
  export class MyComponent {

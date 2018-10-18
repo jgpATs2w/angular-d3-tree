@@ -4,9 +4,9 @@ This is a component to easily integrate [D3](https://d3js.org/) into your Angula
 
 [![NPM](https://nodei.co/npm/angular-d3-tree.png?downloads=true&stars=true)](https://nodei.co/npm/angular-d3-tree/)
 
-## [Demo](https://angular-d3-tree.stackblitz.io)
+## [Demo](https://stackblitz.com/edit/angular-d3-tree)
 
-Check out [the live demo](https://angular-d3-tree.stackblitz.io).
+Check out [the live demo](https://stackblitz.com/edit/angular-d3-tree).
 
 
 ## Installation
@@ -71,6 +71,7 @@ To make changes in the library and easily debig them you can do it locally:
 ```
 git clone https://github.com/jgpats2w/angular-d3-tree
 cd angular-d3-tree
+npm i //install dependencies
 ng build --prod angular-d3-tree-lib //build the library
 npm start //open localhost:4200 to watch the demo
 //to see your changes in the library you need to rebuild the library, stop and start the ng server
